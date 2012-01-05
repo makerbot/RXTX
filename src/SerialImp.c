@@ -4956,7 +4956,7 @@ void throw_java_exception( JNIEnv *env, char *exc, char *foo, char *msg )
 void report_warning(char *msg)
 {
 #ifndef DEBUG_MW
-	fprintf(stderr, msg);
+	fprint(stderr, msg);
 #else
 	mexWarnMsgTxt( (const char *) msg );
 #endif /* DEBUG_MW */
@@ -4977,7 +4977,7 @@ void report_verbose(char *msg)
 #ifdef DEBUG_MW
 	mexErrMsgTxt( msg );
 #else
-	fprintf(stderr, msg);
+	fprint(stderr, msg);
 #endif /* DEBUG_MW */
 #endif /* DEBUG_VERBOSE */
 }
@@ -4993,7 +4993,7 @@ void report_verbose(char *msg)
 void report_error(char *msg)
 {
 #ifndef DEBUG_MW
-	fprintf(stderr, msg);
+	fprint(stderr, msg);
 #else
 	mexWarnMsgTxt( msg );
 #endif /* DEBUG_MW */
@@ -5012,7 +5012,7 @@ void report(char *msg)
 {
 #ifdef DEBUG
 #	ifndef DEBUG_MW
-		fprintf(stderr, msg);
+		fprint(stderr, msg);
 #	else
 		mexPrintf( msg );
 #	endif /* DEBUG_MW */
@@ -5230,7 +5230,13 @@ int fhs_lock( const char *filename, int pid )
 	sprintf( lockinfo, "%10d\n",(int) getpid() );
 	sprintf( message, "fhs_lock: creating lockfile: %s\n", lockinfo );
 	report( message );
-	write( fd, lockinfo, 11 );
+	if (write( fd, lockinfo, 11 ) == -1) {
+		sprintf( message,
+			 "RXTX fhs_lock() Error: Writing to lock file %s: %s\n",
+			 file, strerror(errno) );
+		report_error( message );
+		return 1;
+	}
 	close( fd );
 	return 0;
 }
@@ -5328,7 +5334,13 @@ int uucp_lock( const char *filename, int pid )
 		report_error( message );
 		return 1;
 	}
-	write( fd, lockinfo,11 );
+	if (write( fd, lockinfo,11 ) == -1) {
+		sprintf( message,
+			 "RXTX uucp_lock() Error: Writing to lock file %s: %s\n",
+			 lockfilename, strerror(errno) );
+		report_error( message );
+		return 1;
+	}
 	close( fd );
 	return 0;
 }
@@ -5787,7 +5799,12 @@ int is_device_locked( const char *port_filename )
 
 		/* check if its a stale lock */
 		fd=open( file, O_RDONLY );
-		read( fd, pid_buffer, 11 );
+		if (read( fd, pid_buffer, 11 ) == -1) {
+			sprintf( message,
+				"RXTX Error: Reading lock file %s: %s\n",
+				 file, strerror(errno) );
+			report_error( message );
+		}
 		/* FIXME null terminiate pid_buffer? need to check in Solaris */
 		close( fd );
 		sscanf( pid_buffer, "%d", &pid );
