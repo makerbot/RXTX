@@ -184,6 +184,7 @@ extern void show_user(const char tstring[],char *rs)
     const char *name;
     int uid;
     char temp[80];
+    int fscan_cnt;
 
     parse_args(tstring);
     scan_fd();
@@ -203,10 +204,14 @@ extern void show_user(const char tstring[],char *rs)
     sprintf(path,PROC_BASE "/%d/stat",item->u.proc.pid);
     strcpy(comm,"???");
     if ( ( f = fopen(path,"r") ) ) {
-	(void) fscanf(f,"%d (%[^)]",&dummy,comm);
+	fscan_cnt = fscanf(f,"%d (%[^)]",&dummy,comm);
 	(void) fclose(f);
     }
-    name = comm;
+    if (fscan_cnt == 2) {
+	    name = comm;
+    } else {
+	    name = "Unknown Linux Application";
+    }
     uid = item->u.proc.uid;
     if (uid == UID_UNKNOWN) user = "???";
     else if ( ( pw = getpwuid(uid) ) ) user = pw->pw_name;
