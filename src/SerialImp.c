@@ -1202,7 +1202,7 @@ void *drain_loop( void *arg )
 		usleep(5000);
 #else
 		//usleep(1000000);
-		report("drain_loop: delay\n");
+		report_error("drain_loop: delay\n");
 		usleep(10000);
 #endif /* __sun__ */
 
@@ -4960,7 +4960,7 @@ void throw_java_exception( JNIEnv *env, char *exc, char *foo, char *msg )
 void report_warning(char *msg)
 {
 #ifndef DEBUG_MW
-	fprint(stderr, msg);
+	fputs(msg,stderr);
 #else
 	mexWarnMsgTxt( (const char *) msg );
 #endif /* DEBUG_MW */
@@ -4981,7 +4981,7 @@ void report_verbose(char *msg)
 #ifdef DEBUG_MW
 	mexErrMsgTxt( msg );
 #else
-	fprint(stderr, msg);
+	fprintf(stderr, msg);
 #endif /* DEBUG_MW */
 #endif /* DEBUG_VERBOSE */
 }
@@ -4997,7 +4997,7 @@ void report_verbose(char *msg)
 void report_error(char *msg)
 {
 #ifndef DEBUG_MW
-	fprint(stderr, msg);
+	fputs(msg,stderr);
 #else
 	mexWarnMsgTxt( msg );
 #endif /* DEBUG_MW */
@@ -5016,7 +5016,7 @@ void report(char *msg)
 {
 #ifdef DEBUG
 #	ifndef DEBUG_MW
-		fprint(stderr, msg);
+	fputs(msg, stderr);
 #	else
 		mexPrintf( msg );
 #	endif /* DEBUG_MW */
