@@ -1196,12 +1196,16 @@ void *drain_loop( void *arg )
 	for(i=0;;i++)
 	{
 		report_verbose("drain_loop:  looping\n");
+		/*** phooky: SRSLY? *rolls eyes* ***/
 #if defined(__sun__)
 	/* FIXME: No time to test on all OS's for production */
 		usleep(5000);
 #else
-		usleep(1000000);
+		//usleep(1000000);
+		report("drain_loop: delay\n");
+		usleep(10000);
 #endif /* __sun__ */
+
 		/*
 		system_wait();
 		*/
