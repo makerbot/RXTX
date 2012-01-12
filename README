@@ -18,6 +18,9 @@
 --------------------------------------------------------------------------*/
 This is README  Fri Apr  5 13:05:27 EST 2002
 
+*** NOTE: This is the MakerBot Industries fork of the Arduino fork 
+***       of RXTX.
+
 See Also:
 
 INSTALL:   install instructions and solutions to common problems
