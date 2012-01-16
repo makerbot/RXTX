@@ -33,10 +33,10 @@
 # path to the source code (directory with SerialImp.c) Unix style path
 SRC=../src
 # and the dos path
-DOSSRC=..\\\src
+DOSSRC=..\\src
 
 # path to the jdk directory that has include, bin, lib, ... Unix style path
-JDKHOME=C:/jdk13
+JDKHOME=C:/Program\ Files/Java/jdk1.7.0_02/
 
 #path to mingw32
 MINGHOME="D:/mingw"
@@ -67,16 +67,16 @@ DLLTOOL=dlltool
 DLLWRAP=dllwrap
 
 CLASSPATH=-classpath ".;C:\jdk13\lib\RXTXcomm.jar;c:\BlackBox.jar;c:\jdk13\lib\classes.zip"
-JAVAH=javah $(CLASSPATH)
-JAR=jar 
-JAVAC=javac $(CLASSPATH)
+JAVAH=$(JDKHOME)/bin/javah $(CLASSPATH)
+JAR=$(JDKHOME)/bin/jar 
+JAVAC=$(JDKHOME)/bin/javac $(CLASSPATH)
 
 ######################
 #  Tool Flags
 ######################
 
 CFLAGS_CYGWIN= -O2 $(INCLUDE) -DWIN32 -D __int64="long long" -mno-fp-ret-in-387  -Wall 
-CFLAGS= -O2 $(INCLUDE) -mno-cygwin -DWIN32 -D __int64="long long" -mno-fp-ret-in-387  -Wall
+CFLAGS= -O2 $(INCLUDE) -DWIN32 -D __int64="long long" -mno-fp-ret-in-387  -Wall
 #CFLAGS= -O2 $(INCLUDE) -mno-cygwin -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -Wall -D TRENT_IS_HERE_DEBUGGING_ENUMERATION -DTRENT_IS_HERE_DEBUGGING_THREADS
 INCLUDE= -I c:\matlab6p5/extern/include/ -I . -I $(JDKINCLUDE) -I $(JDKINCLUDE)/win32 -I $(SRC) -I include -I $(MINGINCLUDE)
 JAVAHFLAGS= -jni -d include
@@ -88,7 +88,8 @@ JDKINCLUDE=$(JDKHOME)/include
 MINGINCLUDE=$(MINGHOME)/include
 JAVAFILES = $(wildcard $(SRC)/*.java)
 CFILES=$(wildcard $(SRC)/*.c) $(wildcard $(SRC)/*.cc)
-TARGETLIBS= rxtxSerial.dll rxtxParallel.dll
+TARGETLIBS= rxtxSerial.dll
+# rxtxParallel.dll
 #TARGETLIBS= rxtxSerial.dll rxtxParallel.dll rxtxZystem.dll
 DLLOBJECTS= fixup.o SerialImp.o termios.o init.o fuserImp.o
 PARALLELOBJECTS= ParallelImp.o termios.o init.o
@@ -107,7 +108,7 @@ gnu:
 
 # yayaya We should have put the files in gnu.io to start with
 gnutimestamp:	$(JAVAFILES) $(CFILES) include gnu
-	xcopy /Y $(DOSSRC)\\*.* gnu\\io\\
+	xcopy $(DOSSRC)\\*.* gnu\\io\\
 	echo > gnutimestamp
 
 # FIXME make 3.79.1 behaves really strage if we use %.o rules.
@@ -138,12 +139,12 @@ ParallelImp.o:  include/config.h
 
 #$(SRC)/Zystem.def:	$(DLLOBJECTS) ZystemImp.o
 	#$(LD) --base-file Zystem.base --dll -o rxtxZystem.dll $(DLLOBJECTS) ZystemImp.o _divdi3.o $(LIBS) -lcygwin  -e _dll_entry@12
-	#xcopy /Y  $(DOSSRC)\\Zystem.def gnu\\io\\
+	#xcopy  $(DOSSRC)\\Zystem.def gnu\\io\\
 
 
 $(SRC)/Serial.def:	$(DLLOBJECTS)
 	$(LD) --base-file Serial.base --dll -o rxtxSerial.dll $(DLLOBJECTS) $(LIBS) -lmingw32 -e _dll_entry@12
-	xcopy /Y  $(DOSSRC)\\Serial.def gnu\\io\\
+	xcopy  $(DOSSRC)\\Serial.def gnu\\io\\
 
 #	echo EXPORTS >$(SRC)/Serial.def;for i in `nm rxtxSerial.dll | grep "T _Java"|cut -b 13-`;do echo -n $$i|sed s#@.*##;echo "="$$i;done >> $(SRC)/Serial.def
 
